@@ -1,0 +1,4 @@
+.vs
+x64
+float_demo/Release
+float_demo/*.user

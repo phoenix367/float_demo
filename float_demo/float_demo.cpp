@@ -53,39 +53,8 @@ using FloatType = float;
         SAMPLES_COUNT>(std::make_unique<TestName<FloatType>>(), RangeMin, RangeMax)\
     )
 
-union {
-    struct {
-        unsigned int fraction : 23;
-        unsigned int exponent : 8;
-        unsigned int sign : 1;
-    } float_parts;
-    float float_value;
-} float_data;
-
 int main()
 {
-    float test_v = 0.00036098253726959228f;
-    uint32_t i = *(uint32_t*)&test_v;
-    std::cout << i << std::endl;
-    //constexpr uint32_t exponent256 = (135 << 23) - (127 << 23);
-    //float_data.float_value = 0.94269504f;
-    //float a = -2.0e-34f;
-    //float b = a / 256.0f;
-    //float c = -2.0e-34f;
-    //uint32_t* na = (uint32_t*) &a;
-    //uint32_t* nb = (uint32_t*) &b;
-    //uint32_t* nc = (uint32_t*) &c;
-    //*nc = (*nc - exponent256) * ((*nc & 0x7F800000) > exponent256);
-
-    //std::cout << std::hex << *nc << std::endl;
-    //std::cout << std::hex << (*nc & ~(*nc >> 1)) << std::endl;
-    ////*nc = *nc & ~(*nc >> 9);
-
-    //std::cout << std::hex << exponent256 << std::endl;
-    //std::cout << std::hex << *na << std::endl;
-    //std::cout << std::hex << *nb << std::endl;
-    //std::cout << std::hex << c << std::endl;
-
     auto tests = {
         DECLARE_TEST_WITH_RANGE(ExponentAVX, 1.0e-10f, 70.0f),
         DECLARE_TEST_WITH_RANGE(Exponent, 1.0e-10f, 70.0f),

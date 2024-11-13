@@ -11,6 +11,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "arduino", "arduino", "{1B31E418-8036-49CB-A395-8498D88D6A7B}"
+	ProjectSection(SolutionItems) = preProject
+		arduino\compute_functions.h = arduino\compute_functions.h
+		arduino\heaps.h = arduino\heaps.h
+		arduino\log_scale_rng.h = arduino\log_scale_rng.h
+		arduino\median_value.h = arduino\median_value.h
+		arduino\progress_bar.cpp = arduino\progress_bar.cpp
+		arduino\progress_bar.h = arduino\progress_bar.h
+		arduino\sketch_nov11a.ino = arduino\sketch_nov11a.ino
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
