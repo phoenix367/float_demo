@@ -42,6 +42,18 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "test_basic.h"
 #include "log_scale_rng.h"
 
+struct FunctionTestResult {
+    std::string functionName;
+    double avgRelativeError;
+    double medianRelativeError;
+    double relativeError95;
+    double maxRelativeError;
+    double referenceOpUSec;
+    double approximateOpUSec;
+    size_t totalExperiments;
+    size_t validExperiments;
+};
+
 template<
     typename FloatType,
     typename size_t SAMPLES_COUNT
@@ -58,7 +70,7 @@ public:
 
     }
 
-    void run_single_float() const {
+    FunctionTestResult run_single_float() const {
         std::vector<FloatType> inputValues(SAMPLES_COUNT);
         std::vector<FloatType> referenceValues, actualValues;
 
@@ -136,6 +148,20 @@ public:
             << SAMPLES_COUNT / durationInfo.referenceDuration.count() 
             << SAMPLES_COUNT / durationInfo.approximateDuration.count() << fort::endr;
         std::cout << tablePerformance.to_string() << std::endl;
+
+        FunctionTestResult testResult;
+
+        testResult.approximateOpUSec = SAMPLES_COUNT / durationInfo.approximateDuration.count();
+        testResult.referenceOpUSec = SAMPLES_COUNT / durationInfo.referenceDuration.count();
+        testResult.functionName = _testPtr->getFunctionName();
+        testResult.avgRelativeError = meanError;
+        testResult.medianRelativeError = median;
+        testResult.relativeError95 = percentile_95;
+        testResult.maxRelativeError = *maxError;
+        testResult.totalExperiments = relErrors.size();
+        testResult.validExperiments = validExperiments;
+
+        return testResult;
     }
 
 private:

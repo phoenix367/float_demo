@@ -28,6 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#include <fort.hpp>
+#include <list>
+
 #include "avx_invert_number.h"
 #include "avx_inv_sqrt.h"
 #include "avx_sqrt.h"
@@ -43,6 +46,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 constexpr size_t SAMPLES_COUNT = 10000000;
 using FloatType = float;
+using ResultsList = std::list< FunctionTestResult >;
 
 #define DECLARE_TEST(TestName) \
     (TestSuite<FloatType, \
@@ -52,6 +56,37 @@ using FloatType = float;
     (TestSuite<FloatType, \
         SAMPLES_COUNT>(std::make_unique<TestName<FloatType>>(), RangeMin, RangeMax)\
     )
+
+void printSummary(const ResultsList& results) {
+    std::cout << "Test results (accuracy):" << std::endl;
+    
+    fort::char_table  tableAccuracy;
+    fort::char_table  tablePerformance;
+    tableAccuracy.column(0).set_cell_text_align(fort::text_align::center);
+
+    tableAccuracy << fort::header
+        << "Function name" << "Mean rel. error" << "Median" << "95% error" <<
+        "Max rel. error" << fort::endr;
+
+    tablePerformance << fort::header
+        << "Reference op./uS" << "Approximated op./uS" << "Performance increase" << fort::endr;
+
+    for (const auto& result : results) {
+        tableAccuracy 
+            << result.functionName << result.avgRelativeError 
+            << result.medianRelativeError << result.relativeError95 
+            << result.maxRelativeError << fort::endr;
+
+        tablePerformance
+            << result.referenceOpUSec << result.approximateOpUSec
+            << result.approximateOpUSec / result.referenceOpUSec << fort::endr;
+    }
+
+    std::cout << tableAccuracy.to_string() << std::endl;
+
+    std::cout << "Test results (performance):" << std::endl;
+    std::cout << tablePerformance.to_string() << std::endl;
+}
 
 int main()
 {
@@ -69,7 +104,10 @@ int main()
         DECLARE_TEST(DivideTo256)
     };
 
+    ResultsList results;
     for (auto it = tests.begin(); it != tests.end(); it++) {
-        it->run_single_float();
+        results.push_back(it->run_single_float());
     }
+
+    printSummary(results);
 }
