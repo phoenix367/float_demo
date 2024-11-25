@@ -16,11 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "arduino", "arduino", "{1B31
 	ProjectSection(SolutionItems) = preProject
 		arduino\compute_functions.h = arduino\compute_functions.h
 		arduino\heaps.h = arduino\heaps.h
+		arduino\float_demo.ino = arduino\float_demo.ino
 		arduino\log_scale_rng.h = arduino\log_scale_rng.h
 		arduino\median_value.h = arduino\median_value.h
 		arduino\progress_bar.cpp = arduino\progress_bar.cpp
 		arduino\progress_bar.h = arduino\progress_bar.h
-		arduino\sketch_nov11a.ino = arduino\sketch_nov11a.ino
 	EndProjectSection
 EndProject
 Global

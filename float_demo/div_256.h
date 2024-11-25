@@ -36,9 +36,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "test_basic.h"
 
-template <typename FLOAT_TYPE>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
     requires std::same_as<FLOAT_TYPE, float>
-class DivideTo256 : public TestBasic<FLOAT_TYPE> {
+class DivideTo256 : public TestBasic<FLOAT_TYPE, REPEAT_COUNT> {
+public:
+    using TestBasicType = typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>;
+
 public:
     inline FLOAT_TYPE approximate_value(FLOAT_TYPE x) {
         constexpr uint32_t exponent256 = (135 << 23) - (127 << 23);
@@ -57,7 +60,40 @@ public:
         return "Divide to 256";
     }
 
-    DEFINE_DEFAULT_COMPUTE_FUNCTION
+    TestBasic<FLOAT_TYPE, REPEAT_COUNT>::DelayInfo compute(const std::vector<FLOAT_TYPE>& in, std::vector<FLOAT_TYPE>& targets, std::vector<FLOAT_TYPE>& actuals) override {
+        targets.resize(in.size());
+        actuals.resize(in.size());
+        std::vector<double> targetDelays(REPEAT_COUNT);
+
+        for (size_t r = 0; r < REPEAT_COUNT; r++) {
+            auto start = std::chrono::system_clock::now();
+            for (size_t i = 0; i < in.size(); i++) {
+                targets[i] = reference_value(in[i]);
+            }
+
+            auto stop = std::chrono::system_clock::now();
+            auto targetDelay = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            targetDelays[r] = static_cast<double>(targetDelay.count());
+        }
+
+        std::vector<double> actualDelays(REPEAT_COUNT);
+
+        for (size_t r = 0; r < REPEAT_COUNT; r++) {
+            auto start = std::chrono::system_clock::now();
+            for (size_t i = 0; i < in.size(); i++) {
+                actuals[i] = approximate_value(in[i]);
+            } 
+            auto stop = std::chrono::system_clock::now(); 
+            auto actualDelay = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); 
+            actualDelays[r] = static_cast<double>(actualDelay.count());
+        }
+
+        typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>::DelayInfo delayInfo;
+        delayInfo.referenceDuration = TestBasic<FLOAT_TYPE, REPEAT_COUNT>::DurationType(TestBasic<FLOAT_TYPE, REPEAT_COUNT>::getDelay(targetDelays));
+        delayInfo.approximateDuration = TestBasic<FLOAT_TYPE, REPEAT_COUNT>::DurationType(TestBasic<FLOAT_TYPE, REPEAT_COUNT>::getDelay(actualDelays));
+        
+        return delayInfo;
+    }
 
     bool enableNegatives() override {
         return true;

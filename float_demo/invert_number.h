@@ -35,9 +35,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "test_basic.h"
 
-template <typename FLOAT_TYPE>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
 requires std::same_as<FLOAT_TYPE, float>
-class InvertNumberVerA : public TestBasic<FLOAT_TYPE> {
+class InvertNumberVerA : public TestBasic<FLOAT_TYPE, REPEAT_COUNT> {
+public:
+    using TestBasicType = typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>;
+
 public:
     inline FLOAT_TYPE approximate_value(FLOAT_TYPE x) {
         // re-interpret as a 32 bit integer
@@ -63,9 +66,12 @@ public:
     }
 };
 
-template <typename FLOAT_TYPE = float>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
 requires std::same_as<FLOAT_TYPE, float>
-class InvertNumberVerB : public TestBasic<FLOAT_TYPE> {
+class InvertNumberVerB : public TestBasic<FLOAT_TYPE, REPEAT_COUNT> {
+public:
+    using TestBasicType = typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>;
+
 public:
     static inline FLOAT_TYPE approximate_value(FLOAT_TYPE x) {
         // re-interpret as a 32 bit integer

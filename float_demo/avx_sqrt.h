@@ -33,9 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <emmintrin.h>
 #include "avx_test_base.h"
 
-template <typename FLOAT_TYPE>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
     requires std::same_as<FLOAT_TYPE, float>
-class SquareRootAVX : public AVXAcceleratedTest<FLOAT_TYPE, SquareRootAVX<FLOAT_TYPE>> {
+class SquareRootAVX : public AVXAcceleratedTest<FLOAT_TYPE, SquareRootAVX<FLOAT_TYPE, REPEAT_COUNT>, REPEAT_COUNT> {
 public:
     static inline __m256 approximate_value(__m256 x) {
         __m256i const_1 = _mm256_set1_epi32(127 << 23);

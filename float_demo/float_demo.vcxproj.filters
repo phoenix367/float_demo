@@ -62,5 +62,11 @@
     <ClInclude Include="avx_exp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cpu_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vcpkg.json" />
   </ItemGroup>
 </Project>

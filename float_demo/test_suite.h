@@ -38,30 +38,35 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <tuple>
 #include <fort.hpp>
 #include <iostream>
+#include <string>
 
 #include "test_basic.h"
 #include "log_scale_rng.h"
 
 struct FunctionTestResult {
     std::string functionName;
-    double avgRelativeError;
-    double medianRelativeError;
-    double relativeError95;
-    double maxRelativeError;
-    double referenceOpUSec;
-    double approximateOpUSec;
-    size_t totalExperiments;
-    size_t validExperiments;
+    double avgRelativeError = 0.0;
+    double medianRelativeError = 0.0;
+    double relativeError95 = 0.0;
+    double maxRelativeError = 0.0;
+    double referenceOpUSec = 0.0;
+    double approximateOpUSec = 0.0;
+    size_t totalExperiments = 0;
+    size_t validExperiments = 0;
+    size_t infCount = 0;
+    size_t denCount = 0;
+    std::string rangeStr;
 };
 
 template<
     typename FloatType,
-    typename size_t SAMPLES_COUNT
+    typename size_t SAMPLES_COUNT,
+    typename size_t REPEAT_COUNT
 >
 class TestSuite {
 public:
     TestSuite(
-        std::unique_ptr<TestBasic<FloatType>>&& testPtr,
+        std::unique_ptr<TestBasic<FloatType, REPEAT_COUNT>>&& testPtr,
         FloatType rangeMin = std::numeric_limits<FloatType>::min(),
         FloatType rangeMax = std::numeric_limits<FloatType>::max()
     )
@@ -131,24 +136,6 @@ public:
         std::tie(median, percentile_95) = compute_median_and_percentile(relErrors);
         double meanError = errorSum / validExperiments;
 
-        std::cout << "Test results (accuracy):" << std::endl;
-        fort::char_table  tableAccuracy;
-        tableAccuracy.column(0).set_cell_text_align(fort::text_align::center);
-
-        tableAccuracy << fort::header
-            << "Function name" << "Mean rel. error" << "Median" << "95% error" << 
-            "Max rel. error" << fort::endr
-            << _testPtr->getFunctionName() << meanError << median << percentile_95 << *maxError << fort::endr;
-        std::cout << tableAccuracy.to_string() << std::endl;
-
-        std::cout << "Test results (performance):" << std::endl;
-        fort::char_table  tablePerformance;
-        tablePerformance << fort::header
-            << "Reference op./uS" << "Approximated op./uS" << fort::endr
-            << SAMPLES_COUNT / durationInfo.referenceDuration.count() 
-            << SAMPLES_COUNT / durationInfo.approximateDuration.count() << fort::endr;
-        std::cout << tablePerformance.to_string() << std::endl;
-
         FunctionTestResult testResult;
 
         testResult.approximateOpUSec = SAMPLES_COUNT / durationInfo.approximateDuration.count();
@@ -160,6 +147,11 @@ public:
         testResult.maxRelativeError = *maxError;
         testResult.totalExperiments = relErrors.size();
         testResult.validExperiments = validExperiments;
+        testResult.denCount = denCount;
+        testResult.infCount = infCount;
+        testResult.rangeStr = _rng.getRangeStr();
+
+        std::cout << "Test finished." << std::endl << std::endl;
 
         return testResult;
     }
@@ -193,5 +185,5 @@ private:
 
 private:
     mutable LogScaleRNG<FloatType> _rng;
-    std::unique_ptr<TestBasic<FloatType>> _testPtr;
+    std::unique_ptr<TestBasic<FloatType, REPEAT_COUNT>> _testPtr;
 };

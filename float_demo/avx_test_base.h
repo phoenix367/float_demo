@@ -34,12 +34,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "test_basic.h"
 
-template <typename FLOAT_TYPE, typename TargetTest>
-class AVXAcceleratedTest : public TestBasic<FLOAT_TYPE> {
+template <typename FLOAT_TYPE, typename TargetTest, typename size_t REPEAT_COUNT>
+class AVXAcceleratedTest : public TestBasic<FLOAT_TYPE, REPEAT_COUNT> {
+public:
+    using TestBasicType = typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>;
+
 public:
     virtual ~AVXAcceleratedTest() = default;
 
-    TestBasic<FLOAT_TYPE>::DelayInfo compute(
+    TestBasicType::DelayInfo compute(
         const std::vector<FLOAT_TYPE>& in,
         std::vector<FLOAT_TYPE>& targets,
         std::vector<FLOAT_TYPE>& actuals
@@ -86,11 +89,11 @@ public:
             actualDelays[r] = static_cast<double>(actualDelay.count());
         }
 
-        typename TestBasic<FLOAT_TYPE>::DelayInfo delayInfo;
-        delayInfo.referenceDuration = TestBasic<FLOAT_TYPE>::DurationType(
-            TestBasic<FLOAT_TYPE>::getDelay(targetDelays));
-        delayInfo.approximateDuration = TestBasic<FLOAT_TYPE>::DurationType(
-            TestBasic<FLOAT_TYPE>::getDelay(actualDelays));
+        typename TestBasicType::DelayInfo delayInfo;
+        delayInfo.referenceDuration = TestBasicType::DurationType(
+            TestBasicType::getDelay(targetDelays));
+        delayInfo.approximateDuration = TestBasicType::DurationType(
+            TestBasicType::getDelay(actualDelays));
 
         return delayInfo;
     }

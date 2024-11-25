@@ -32,9 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "avx_test_base.h"
 
-template <typename FLOAT_TYPE>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
     requires std::same_as<FLOAT_TYPE, float>
-class DivideTo256AVX : public AVXAcceleratedTest<FLOAT_TYPE, DivideTo256AVX<FLOAT_TYPE>> {
+class DivideTo256AVX : public AVXAcceleratedTest<FLOAT_TYPE, DivideTo256AVX<FLOAT_TYPE, REPEAT_COUNT>, REPEAT_COUNT> {
 public:
     static inline __m256 approximate_value(__m256 x) {
         __m256i exponent256 = _mm256_set1_epi32((135 << 23) - (127 << 23));

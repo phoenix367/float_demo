@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <concepts>
 #include <random>
 #include <cmath>
+#include <sstream>
 
 template<typename FLOAT_TYPE>
     requires std::floating_point<FLOAT_TYPE>
@@ -43,6 +44,8 @@ public:
         , _enableNegatives(enableNegatives) {
         FLOAT_TYPE rangeMinLog = logf(rangeMin);
         FLOAT_TYPE rangeMaxLog = logf(rangeMax);
+        _rangeMin = rangeMin;
+        _rangeMax = rangeMax;
 
         _dist = std::uniform_real_distribution<FLOAT_TYPE>(rangeMinLog, rangeMaxLog);
         _signDist = std::uniform_int_distribution<int>(0, 1);
@@ -62,10 +65,25 @@ public:
         return number;
     }
 
+    const std::string getRangeStr() const {
+        std::ostringstream resultStream;
+
+        if (_enableNegatives) {
+            resultStream << "[" << -_rangeMax << ".." << -_rangeMin << "] and \n["
+                << _rangeMin << ".." << _rangeMax << "]";
+        } else {
+            resultStream << "[" << _rangeMin << ".." << _rangeMax << "]";
+        }
+
+        return resultStream.str();
+    }
+
 private:
     std::random_device _rd;
     std::mt19937 _e2;
     std::uniform_real_distribution<FLOAT_TYPE> _dist;
     std::uniform_int_distribution<int> _signDist;
     bool _enableNegatives;
+    FLOAT_TYPE _rangeMin;
+    FLOAT_TYPE _rangeMax;
 };

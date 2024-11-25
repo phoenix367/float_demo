@@ -30,32 +30,45 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-#include <emmintrin.h>
-#include "avx_test_base.h"
+#include <infoware/cpu.hpp>
 
-template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
-    requires std::same_as<FLOAT_TYPE, float>
-class InverseSquareRootAVX : public AVXAcceleratedTest<FLOAT_TYPE, InverseSquareRootAVX<FLOAT_TYPE, REPEAT_COUNT>, REPEAT_COUNT> {
-public:
-    static inline __m256 approximate_value(__m256 x) {
-        __m256i const_1 = _mm256_set1_epi32(0x5F375A86);
-        __m128i const_2 = _mm_set1_epi64x(1);
-        __m256i op = _mm256_srl_epi32(_mm256_castps_si256(x), const_2);
-        __m256i res = _mm256_sub_epi32(const_1, op);
+static const char* cache_type_name(iware::cpu::cache_type_t cache_type) noexcept {
+	switch (cache_type) {
+	case iware::cpu::cache_type_t::unified:
+		return "Unified";
+	case iware::cpu::cache_type_t::instruction:
+		return "Instruction";
+	case iware::cpu::cache_type_t::data:
+		return "Data";
+	case iware::cpu::cache_type_t::trace:
+		return "Trace";
+	default:
+		return "Unknown";
+	}
+}
 
-        return _mm256_castsi256_ps(res);
-    }
+static const char* architecture_name(iware::cpu::architecture_t architecture) noexcept {
+	switch (architecture) {
+	case iware::cpu::architecture_t::x64:
+		return "x64";
+	case iware::cpu::architecture_t::arm:
+		return "ARM";
+	case iware::cpu::architecture_t::itanium:
+		return "Itanium";
+	case iware::cpu::architecture_t::x86:
+		return "x86";
+	default:
+		return "Unknown";
+	}
+}
 
-    static inline __m256 reference_value(__m256 x) {
-        __m256 res = _mm256_rsqrt_ps(x);
-        return res;
-    }
-
-    std::string getFunctionName() override {
-        return "Inverse Square root (AVX)";
-    }
-
-    bool enableNegatives() override {
-        return false;
-    }
-};
+static const char* endianness_name(iware::cpu::endianness_t endianness) noexcept {
+	switch (endianness) {
+	case iware::cpu::endianness_t::little:
+		return "Little-Endian";
+	case iware::cpu::endianness_t::big:
+		return "Big-Endian";
+	default:
+		return "Unknown";
+	}
+}

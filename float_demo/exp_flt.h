@@ -35,9 +35,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "test_basic.h"
 
-template <typename FLOAT_TYPE>
+template <typename FLOAT_TYPE, typename size_t REPEAT_COUNT>
     requires std::same_as<FLOAT_TYPE, float>
-class Exponent : public TestBasic<FLOAT_TYPE> {
+class Exponent : public TestBasic<FLOAT_TYPE, REPEAT_COUNT> {
+public:
+    using TestBasicType = typename TestBasic<FLOAT_TYPE, REPEAT_COUNT>;
+
 private:
 #pragma pack(push)
 #pragma pack(1)
