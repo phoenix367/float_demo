@@ -1,10 +1,24 @@
 # Float Demo
 
-A simple demonstration of floating-point arithmetic and its unique behaviors, aimed at exploring the quirks and edge cases of floating-point calculations in C++. The benchmark measures performance of several floating operations: square root, inverse square root, exponent, inverse number, division to specific constant.
+<br>
+A simple demonstration of floating-point arithmetic 
+and its unique behaviors, aimed at exploring the quirks 
+and edge cases of floating-point calculations in C++. 
+The benchmark measures performance of several floating 
+operations: square root, inverse square root, exponent, 
+inverse number, division to specific constant.
+</br>
+
+<br>
+</br>
 
 ## Disclaimer
 
-This is just demo code and author doesn't provide any guarantees about its correctness and bug-free. Please be careful with benchmark results interpretation.
+<br>
+This is just demo code and author doesn't provide any 
+guarantees about its correctness and bug-free. Please be 
+careful with benchmark results interpretation.
+</br>
 
 ## Features
 
@@ -27,7 +41,7 @@ cd float_demo
 git checkout
 ```
 
-### Build instructions
+### Build and run instructions
 
 #### For x86 platform
 
@@ -42,23 +56,101 @@ git checkout
 - Build and upload sketch to the board
 - Connect serial terminal to board virtual COM-port to see benchmark outputs
 
-
-### Example usage
-The project includes sample cases that highlight floating-point behaviors such as:
-
-- Precision errors.
-- Rounding anomalies.
-- Overflow and underflow scenarios.
-
-Run the program to see these behaviors and modify the source code to experiment with your own examples.
-
 ## Some performance measures
 
-There was made some performance measurements for two platforms: x86-based laptop and Arduino UNO board.
+<br>
+There was made some performance measurements for two 
+platforms: x86-based laptop and Arduino UNO board.
+The benchmark software performs several measurements like accuracy,
+computation performance and compute errors. Each type
+of measurements provided as a separated text table for
+x86 version of benchmark and as a text log for Arduino UNO
+version.
+</br>
 
 ### x86 platform
 
 Target processor: ``Intel(R) Core(TM) i5-8350U CPU @ 1.70GHz``
+Number of random experiments: ``10000000``
+Repeat count (how many times we repeat a set of experiments): ``1000``
+
+**Accuracy measurements**:
+```
++---------------------------+-----------------+-----------+-----------+----------------+
+| Function name             | Mean rel. error | Median    | 95% error | Max rel. error |
++---------------------------+-----------------+-----------+-----------+----------------+
+| Exponent (AVX)            | 0.0240699       | 0.0273437 | 0.0296321 | 0.0398002      |
+| Exponent                  | 0.0241446       | 0.0273437 | 0.0313367 | 0.0423965      |
+| Divide to 256 (AVX)       | 0               | 0         | 0         | 0              |
+| Divide to 256             | 0               | 0         | 0         | 0              |
+| Square root (AVX)         | 0.020141        | 0.0150564 | 0.0546945 | 0.0606601      |
+| Square root               | 0.0201444       | 0.0150623 | 0.0547016 | 0.0606601      |
+| Inverse Square root (AVX) | 0.0229901       | 0.0255445 | 0.0338016 | 0.0345307      |
+| Inverse Square root       | 0.0229894       | 0.0255425 | 0.0337852 | 0.0343655      |
+| Number inversion (AVX)    | 0.0281091       | 0.0243195 | 0.0659718 | 0.13332        |
+| Number inversion (ver. A) | 0.0281062       | 0.0243226 | 0.0659718 | 0.133302       |
+| Number inversion (ver. B) | 0.082048        | 0.0924384 | 0.124757  | 0.125          |
++---------------------------+-----------------+-----------+-----------+----------------+
+```
+
+**Performance measurements**:
+```
++---------------------------+-------------------+----------------------+----------------------+
+| Function name             | Reference, op./uS | Approximated, op./uS | Performance increase |
++---------------------------+-------------------+----------------------+----------------------+
+| Exponent (AVX)            | 1590.89           | 2125.93              | 1.33631              |
+| Exponent                  | 171.391           | 195.199              | 1.13891              |
+| Divide to 256 (AVX)       | 750.043           | 2117.42              | 2.82307              |
+| Divide to 256             | 511.376           | 665.674              | 1.30173              |
+| Square root (AVX)         | 2075.04           | 1998.92              | 0.963315             |
+| Square root               | 1031.59           | 1127.28              | 1.09276              |
+| Inverse Square root (AVX) | 2009.7            | 2125.51              | 1.05763              |
+| Inverse Square root       | 552.853           | 1045.12              | 1.89042              |
+| Number inversion (AVX)    | 1459.24           | 2071.18              | 1.41935              |
+| Number inversion (ver. A) | 760.084           | 1363.11              | 1.79337              |
+| Number inversion (ver. B) | 654.226           | 1025.42              | 1.56739              |
++---------------------------+-------------------+----------------------+----------------------+
+```
+
+**Floating-point errors**
+```
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Function name             | Test range                        | Valid samples | Unexp. inf. | Unexp. den. |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Exponent (AVX)            | [-70..-1e-10] and                 | 10000000      | 0           | 0           |
+|                           | [1e-10..70]                       |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Exponent                  | [-70..-1e-10] and                 | 10000000      | 0           | 0           |
+|                           | [1e-10..70]                       |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Divide to 256 (AVX)       | [-3.40282e+38..-1.17549e-38] and  | 9684847       | 0           | 0           |
+|                           | [1.17549e-38..3.40282e+38]        |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Divide to 256             | [-3.40282e+38..-1.17549e-38] and  | 9684839       | 0           | 0           |
+|                           | [1.17549e-38..3.40282e+38]        |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Square root (AVX)         | [1.17549e-38..3.40282e+38]        | 10000000      | 0           | 0           |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Square root               | [1.17549e-38..3.40282e+38]        | 10000000      | 0           | 0           |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Inverse Square root (AVX) | [1.17549e-38..3.40282e+38]        | 9999999       | 0           | 0           |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Inverse Square root       | [1.17549e-38..3.40282e+38]        | 10000000      | 0           | 0           |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Number inversion (AVX)    | [-3.40282e+38..-1.17549e-38] and  | 9921147       | 0           | 3804        |
+|                           | [1.17549e-38..3.40282e+38]        |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Number inversion (ver. A) | [-3.40282e+38..-1.17549e-38] and  | 9921317       | 0           | 3844        |
+|                           | [1.17549e-38..3.40282e+38]        |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+| Number inversion (ver. B) | [-3.40282e+38..-1.17549e-38] and  | 9921065       | 0           | 0           |
+|                           | [1.17549e-38..3.40282e+38]        |               |             |             |
++---------------------------+-----------------------------------+---------------+-------------+-------------+
+```
+
+### Arduino UNO platform
+
+Target processor: ``ATMega328P``
 
 **Accuracy measurements**:
 ```
